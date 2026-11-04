@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brunchies</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 20px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f7f3ee;
+    color: #2b2b2b;
+    padding: 18px;
+    max-width: 820px;
+    margin: 0 auto;
+    line-height: 1.55;
+  }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 { font-size: 2.2em; color: #6f4e37; }
+  header p { color: #8a7a6d; font-size: 1.05em; }
+
+  h2 {
+    font-size: 1.4em;
+    margin: 30px 0 14px;
+    color: #6f4e37;
+    border-bottom: 3px solid #e6dcd2;
+    padding-bottom: 8px;
+  }
+
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 5px rgba(0,0,0,0.07); }
+  th, td { padding: 14px 14px; text-align: left; font-size: 1.05em; }
+  th { background: #6f4e37; color: #fff; font-weight: 600; font-size: 1em; }
+  td:last-child, th:last-child { text-align: right; }
+  tbody tr:nth-child(even) { background: #faf7f3; }
+
+  /* Produktnamen deutlich größer */
+  td.product-name {
+    font-size: 1.7em;
+    font-weight: 700;
+    color: #2b2b2b;
+  }
+
+  .category { font-weight: 700; color: #6f4e37; background: #efe7de !important; font-size: 1.05em; }
+
+  .price-btn {
+    display: inline-block;
+    padding: 12px 18px;
+    font-size: 1.1em;
+    font-weight: 700;
+    font-family: inherit;
+    color: #6f4e37;
+    background: #fff;
+    border: 2px solid #c9b8a8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    min-width: 100px;
+    min-height: 52px;
+  }
+  .price-btn:hover { background: #efe7de; }
+  .price-btn:active { background: #6f4e37; color: #fff; transform: scale(0.97); }
+  .price-btn:focus-visible { outline: 3px solid #6f4e37; outline-offset: 2px; }
+
+  .calc {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.09);
+    margin-top: 14px;
+  }
+  .calc label { display: block; font-size: 1.05em; margin-bottom: 8px; color: #6f4e37; font-weight: 700; }
+  .calc input[type="number"], .calc input[type="text"], .calc select, .calc textarea {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.15em;
+    font-family: inherit;
+    border: 2px solid #d8cfc6;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    background: #fff;
+    min-height: 56px;
+  }
+  .calc input:focus, .calc select:focus, .calc textarea:focus { outline: 3px solid #6f4e37; border-color: transparent; }
+
+  .clear-btn {
+    padding: 14px 20px;
+    font-size: 1em;
+    font-family: inherit;
+    font-weight: 700;
+    color: #c62828;
+    background: #fdecea;
+    border: 2px solid #f5c6c2;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 56px;
+  }
+  .clear-btn:hover { background: #fbd9d6; }
+  .clear-btn:focus-visible { outline: 3px solid #c62828; outline-offset: 2px; }
+
+  .change-box {
+    margin-top: 12px;
+    padding: 20px;
+    background: #eaf5ea;
+    border-radius: 12px;
+    text-align: center;
+  }
+  .change-box .amount { font-size: 2.2em; font-weight: 800; color: #2e7d32; }
+  .change-box.negative { background: #fdecea; }
+  .change-box.negative .amount { color: #c62828; }
+  .change-box small { color: #555; display: block; margin-top: 6px; font-size: 1em; }
+
+  footer { text-align: center; font-size: 0.95em; color: #8a7a6d; margin-top: 36px; }
+
+  .edit-btn {
+    display: inline-block;
+    padding: 12px 22px;
+    font-size: 1.05em;
+    font-family: inherit;
+    font-weight: 700;
+    color: #fff;
+    background: #6f4e37;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 8px;
+    min-height: 52px;
+  }
+  .edit-btn:hover { background: #5a3e2b; }
+  .edit-btn:focus-visible { outline: 3px solid #6f4e37; outline-offset: 2px; }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 3px solid #e6dcd2;
+    padding-bottom: 10px;
+    margin: 30px 0 14px;
+  }
+  .section-head h2 { margin: 0; border: none; padding: 0; }
+
+  .cart-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.09);
+    margin-bottom: 16px;
+  }
+  .cart-empty { color: #8a7a6d; font-size: 1.05em; text-align: center; padding: 12px; }
+  .cart-list { list-style: none; margin-bottom: 10px; }
+  .cart-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #f0e8e0;
+    font-size: 1.05em;
+    gap: 10px;
+  }
+  .cart-list li:last-child { border-bottom: none; }
+  .cart-list .cart-name { flex: 1; }
+  .cart-list .cart-price { margin: 0 10px; font-weight: 700; color: #6f4e37; white-space: nowrap; }
+  .cart-list .cart-del {
+    padding: 8px 14px;
+    font-size: 1em;
+    font-weight: 700;
+    color: #c62828;
+    background: #fdecea;
+    border: 2px solid #f5c6c2;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .cart-list .cart-del:hover { background: #fbd9d6; }
+  .cart-sum {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 1.3em;
+    color: #6f4e37;
+    padding-top: 12px;
+    border-top: 3px solid #e6dcd2;
+  }
+
+  .checkout-btn {
+    width: 100%;
+    padding: 18px;
+    font-size: 1.2em;
+    font-family: inherit;
+    font-weight: 800;
+    color: #fff;
+    background: #2e7d32;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 14px;
+    min-height: 64px;
+  }
+  .checkout-btn:hover { background: #256428; }
+  .checkout-btn:disabled { background: #bfbfbf; cursor: not-allowed; }
+  .checkout-btn:focus-visible { outline: 3px solid #2e7d32; outline-offset: 2px; }
+
+  .history-list { list-style: none; }
+  .history-list li {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    font-size: 1.05em;
+  }
+  .history-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .history-date { color: #8a7a6d; font-size: 0.95em; }
+  .history-total { font-weight: 800; color: #2e7d32; font-size: 1.15em; }
+  .history-items { color: #444; font-size: 1em; line-height: 1.6; }
+  .history-actions { display: flex; gap: 10px; margin-top: 10px; }
+  .history-actions button {
+    padding: 10px 16px;
+    font-size: 0.95em;
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid #d8cfc6;
+    background: #fff;
+    color: #6f4e37;
+    min-height: 48px;
+  }
+  .history-actions button:hover { background: #efe7de; }
+  .history-empty { color: #8a7a6d; font-size: 1.05em; text-align: center; padding: 20px; background: #fff; border-radius: 12px; }
+  .history-summary {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    font-size: 1.05em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .history-summary strong { color: #6f4e37; font-size: 1.1em; }
+
+  .goto-kasse {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    background: #6f4e37;
+    color: #fff;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-top: 32px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    flex-wrap: wrap;
+  }
+  .goto-kasse .info { font-size: 1em; opacity: 0.95; flex: 1; min-width: 180px; }
+  .goto-kasse .info strong { display: block; font-size: 1.25em; opacity: 1; margin-bottom: 4px; }
+  .goto-kasse button {
+    padding: 16px 24px;
+    font-size: 1.1em;
+    font-family: inherit;
+    font-weight: 800;
+    color: #6f4e37;
+    background: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    white-space: nowrap;
+    min-height: 60px;
+  }
+  .goto-kasse button:hover { background: #efe7de; }
+  .goto-kasse button:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .back-btn {
+    display: inline-block;
+    padding: 14px 22px;
+    font-size: 1.05em;
+    font-family: inherit;
+    font-weight: 700;
+    color: #6f4e37;
+    background: #fff;
+    border: 2px solid #c9b8a8;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 22px;
+    min-height: 56px;
+  }
+  .back-btn:hover { background: #efe7de; }
+  .back-btn:focus-visible { outline: 3px solid #6f4e37; outline-offset: 2px; }
+
+  .cashbook-top {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 560px) {
+    .cashbook-top { grid-template-columns: 1fr; }
+  }
+  .cash-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.09);
+    text-align: center;
+  }
+  .cash-card.main {
+    background: #6f4e37;
+    color: #fff;
+    grid-column: 1 / -1;
+  }
+  .cash-card .label { font-size: 0.95em; opacity: 0.9; }
+  .cash-card .value { font-size: 1.9em; font-weight: 800; margin-top: 6px; }
+  .cash-card.main .value { font-size: 2.5em; }
+  .cash-card .sub { font-size: 0.85em; opacity: 0.85; margin-top: 6px; }
+  .cash-card.income .value { color: #2e7d32; }
+  .cash-card.expense .value { color: #c62828; }
+
+  .cashbook-form {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.09);
+    margin-bottom: 18px;
+  }
+  .cashbook-form label { display: block; font-size: 1em; margin-bottom: 8px; color: #6f4e37; font-weight: 700; }
+  .cashbook-form input, .cashbook-form select, .cashbook-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.1em;
+    font-family: inherit;
+    border: 2px solid #d8cfc6;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    background: #fff;
+    min-height: 56px;
+  }
+  .cashbook-form input:focus, .cashbook-form select:focus, .cashbook-form textarea:focus {
+    outline: 3px solid #6f4e37; border-color: transparent;
+  }
+  .cashbook-form textarea { resize: vertical; min-height: 80px; }
+  .cashbook-form .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .cashbook-form .form-row > div { flex: 1; min-width: 140px; }
+  .cashbook-form button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1em;
+    font-family: inherit;
+    font-weight: 800;
+    color: #fff;
+    background: #6f4e37;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    min-height: 60px;
+  }
+  .cashbook-form button:hover { background: #5a3e2b; }
+  .cashbook-form button:focus-visible { outline: 3px solid #6f4e37; outline-offset: 2px; }
+
+  .balance-edit-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.09);
+    margin-bottom: 18px;
+    border-left: 6px solid #856404;
+  }
+  .balance-edit-box label { display: block; font-size: 1em; margin-bottom: 8px; color: #856404; font-weight: 700; }
+  .balance-edit-box input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.1em;
+    font-family: inherit;
+    border: 2px solid #d8cfc6;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    background: #fff;
+    min-height: 56px;
+  }
+  .balance-edit-box input:focus { outline: 3px solid #856404; border-color: transparent; }
+  .balance-edit-box button {
+    width: 100%;
+    padding: 16px;
+    font-size: 1.1em;
+    font-family: inherit;
+    font-weight: 800;
+    color: #fff;
+    background: #856404;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    min-height: 60px;
+  }
+  .balance-edit-box button:hover { background: #6c5003; }
+  .balance-edit-box button:focus-visible { outline: 3px solid #856404; outline-offset: 2px; }
+  .balance-edit-box .hint { font-size: 0.9em; color: #8a7a6d; margin-bottom: 12px; line-height: 1.5; }
+
+  .cashbook-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .cashbook-filter select {
+    flex: 1;
+    min-width: 150px;
+    padding: 14px 16px;
+    font-size: 1em;
+    font-family: inherit;
+    border: 2px solid #d8cfc6;
+    border-radius: 10px;
+    background: #fff;
+    min-height: 56px;
+  }
+  .cashbook-filter select:focus { outline: 3px solid #6f4e37; border-color: transparent; }
+
+  .cashbook-list { list-style: none; }
+  .cashbook-list li {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    font-size: 1em;
+  }
+  .entry-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cashbook-list .entry-info { flex: 1; min-width: 150px; }
+  .cashbook-list .entry-desc { font-weight: 700; font-size: 1.1em; }
+  .cashbook-list .entry-meta { color: #8a7a6d; font-size: 0.95em; margin-top: 5px; }
+  .cashbook-list .entry-note {
+    font-size: 0.95em;
+    color: #555;
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: #faf7f3;
+    border-radius: 8px;
+    font-style: italic;
+  }
+  .cashbook-list .entry-amount { font-weight: 800; white-space: nowrap; font-size: 1.2em; }
+  .cashbook-list .entry-amount.income { color: #2e7d32; }
+  .cashbook-list .entry-amount.expense { color: #c62828; }
+  .cashbook-list .entry-del {
+    padding: 8px 14px;
+    font-size: 1em;
+    font-weight: 700;
+    color: #c62828;
+    background: #fdecea;
+    border: 2px solid #f5c6c2;
+    border-radius: 8px;
+    cursor: pointer;
+    align-self: flex-start;
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .cashbook-list .entry-del:hover { background: #fbd9d6; }
+  .cashbook-empty { color: #8a7a6d; font-size: 1.05em; text-align: center; padding: 20px; background: #fff; border-radius: 12px; }
+
+  .cashbook-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 0.8em;
+    border-radius: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .cashbook-tag.sale    { background: #eaf5ea; color: #2e7d32; }
+  .cashbook-tag.manual  { background: #efe7de; color: #6f4e37; }
+  .cashbook-tag.cat     { background: #e8eef7; color: #3b5f8a; }
+  .cashbook-tag.correction { background: #fff3cd; color: #856404; }
+
+  .filter-summary {
+    background: #efe7de;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-size: 1em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #6f4e37;
+  }
+  .filter-summary strong { color: #2b2b2b; font-size: 1.05em; }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    padding: 18px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: block; }
+
+  .modal {
+    background: #fff;
+    max-width: 820px;
+    margin: 24px auto;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 34px rgba(0,0,0,0.3);
+  }
+  .modal h3 { color: #6f4e37; margin-bottom: 6px; font-size: 1.5em; }
+  .modal .hint { font-size: 1em; color: #8a7a6d; margin-bottom: 20px; }
+
+  .edit-table { width: 100%; border-collapse: collapse; font-size: 1em; }
+  .edit-table th { background: #efe7de; color: #6f4e37; padding: 12px 8px; font-size: 0.95em; text-align: left; }
+  .edit-table td { padding: 8px; border-bottom: 2px solid #f0e8e0; }
+  .edit-table input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1.05em;
+    font-family: inherit;
+    border: 2px solid #d8cfc6;
+    border-radius: 8px;
+    background: #fff;
+    min-height: 52px;
+  }
+  .edit-table input:focus { outline: 3px solid #6f4e37; border-color: transparent; }
+  .edit-table input[type="number"] { max-width: 110px; }
+  .edit-table .del-btn {
+    padding: 10px 14px;
+    font-size: 1.1em;
+    color: #c62828;
+    background: #fdecea;
+    border: 2px solid #f5c6c2;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 48px;
+    min-height: 48px;
+  }
+  .edit-table .del-btn:hover { background: #fbd9d6; }
+
+  .modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+    justify-content: flex-end;
+  }
+  .modal-actions button {
+    padding: 14px 22px;
+    font-size: 1.05em;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    min-height: 56px;
+  }
+  .btn-add { background: #eaf5ea; color: #2e7d32; border: 2px solid #bfe0bf !important; }
+  .btn-add:hover { background: #d8ecd8; }
+  .btn-reset { background: #fdecea; color: #c62828; border: 2px solid #f5c6c2 !important; }
+  .btn-reset:hover { background: #fbd9d6; }
+  .btn-cancel { background: #f0f0f0; color: #444; }
+  .btn-cancel:hover { background: #e0e0e0; }
+  .btn-save { background: #6f4e37; color: #fff; }
+  .btn-save:hover { background: #5a3e2b; }
+
+  #errorBar {
+    display: none;
+    background: #c62828;
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    font-size: 1em;
+    word-break: break-word;
+  }
+
+  @media (max-width: 620px) {
+    html { font-size: 19px; }
+    td.product-name { font-size: 1.5em; }
+    .edit-table thead { display: none; }
+    .edit-table, .edit-table tbody, .edit-table tr, .edit-table td { display: block; width: 100%; }
+    .edit-table tr { border-bottom: 3px solid #f0e8e0; padding: 12px 0; }
+    .edit-table td { border: none; padding: 4px 0; }
+    .edit-table td::before { content: attr(data-label); display: block; font-size: 0.85em; color: #8a7a6d; font-weight: 700; margin-bottom: 4px; }
+    .edit-table input[type="number"] { max-width: 100%; }
+    .goto-kasse { flex-direction: column; align-items: stretch; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="errorBar"></div>
+
+<header>
+  <h1>☕ Brunchies</h1>
+  <p>Preisliste, Wechselgeldrechner &amp; Verkaufshistorie</p>
+</header>
+
+<!-- ================= ANSICHT 1: KASSE ================= -->
+<div class="view active" id="viewKasse">
+
+  <div class="section-head">
+    <h2>Preisliste</h2>
+    <button class="edit-btn" id="openEditor" type="button">✎ Bearbeiten</button>
+  </div>
+  <p style="font-size:1em; color:#8a7a6d; margin-bottom:14px;">
+    Preis antippen, um ihn zum Warenkorb hinzuzufügen.
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Artikel</th>
+        <th>Schüler</th>
+        <th>Erwachsene</th>
+      </tr>
+    </thead>
+    <tbody id="priceBody"></tbody>
+  </table>
+
+  <h2>Warenkorb &amp; Kasse</h2>
+  <div class="cart-box">
+    <ul class="cart-list" id="cartList"></ul>
+    <div class="cart-sum">
+      <span>Gesamt</span>
+      <span id="cartTotal">0,00 €</span>
+    </div>
+  </div>
+
+  <div class="calc">
+    <label>Gegebenes Geld des Kunden (€)</label>
+    <input type="number" id="given" step="0.01" min="0" placeholder="0,00">
+
+    <div class="change-box" id="changeBox">
+      <div style="font-weight:700;">Rückgeld</div>
+      <div class="amount" id="changeAmount">0,00 €</div>
+      <small id="changeNote">Beträge oben eingeben</small>
+    </div>
+
+    <button class="checkout-btn" id="checkoutBtn" type="button" disabled>Verkauf abschließen &amp; speichern</button>
+  </div>
+
+  <div class="section-head">
+    <h2>Verkaufshistorie</h2>
+    <button class="clear-btn" id="clearHistory" type="button" style="margin-top:0;">Historie löschen</button>
+  </div>
+  <div class="history-summary" id="historySummary" style="display:none;">
+    <span>Verkäufe: <strong id="sumCount">0</strong></span>
+    <span>Gesamtumsatz: <strong id="sumRevenue">0,00 €</strong></span>
+  </div>
+  <ul class="history-list" id="historyList"></ul>
+
+  <div class="goto-kasse">
+    <div class="info">
+      <strong>Kassensystem</strong>
+      Einnahmen, Ausgaben, Kategorien und Kassenbestand verwalten
+    </div>
+    <button id="gotoKasse" type="button">Zum Kassensystem →</button>
+  </div>
+
+</div>
+
+<!-- ================= ANSICHT 2: KASSENSYSTEM ================= -->
+<div class="view" id="viewKassensystem">
+
+  <button class="back-btn" id="backToKasse" type="button">← Zurück zur Kasse</button>
+
+  <h2 style="margin-top:0;">Kassenbuch</h2>
+
+  <div class="cashbook-top">
+    <div class="cash-card main">
+      <div class="label">Aktueller Kassenbestand</div>
+      <div class="value" id="cashBalance">0,00 €</div>
+      <div class="sub" id="cashSub">Einnahmen − Ausgaben</div>
+    </div>
+    <div class="cash-card income">
+      <div class="label">Einnahmen (gefiltert)</div>
+      <div class="value" id="cashIncome">0,00 €</div>
+    </div>
+    <div class="cash-card expense">
+      <div class="label">Ausgaben (gefiltert)</div>
+      <div class="value" id="cashExpense">0,00 €</div>
+    </div>
+  </div>
+
+  <div class="balance-edit-box">
+    <label for="newBalance">Kassenbestand ändern</label>
+    <p class="hint">
+      Trage den tatsächlichen Bestand in der Kasse ein. Die Differenz zum berechneten Bestand wird automatisch als „Bestandskorrektur" im Kassenbuch verbucht.
+    </p>
+    <input type="number" id="newBalance" step="0.01" placeholder="Neuer Bestand in €">
+    <button id="applyBalance" type="button">Bestand übernehmen</button>
+  </div>
+
+  <div class="cashbook-form">
+    <label>Beschreibung</label>
+    <select id="cbDesc">
+      <option value="">– Bitte wählen –</option>
+      <optgroup label="Ausgaben">
+        <option value="Wareneinkauf" data-type="expense" data-category="Wareneinkauf">Wareneinkauf</option>
+        <option value="Wechselgeld aufgefüllt" data-type="expense" data-category="Wechselgeld">Wechselgeld aufgefüllt</option>
+        <option value="Entnahme" data-type="expense" data-category="Entnahme">Entnahme</option>
+        <option value="Sonstige Ausgabe" data-type="expense" data-category="Sonstiges">Sonstige Ausgabe</option>
+      </optgroup>
+      <optgroup label="Einnahmen">
+        <option value="Einlage" data-type="income" data-category="Einlage">Einlage</option>
+        <option value="Sonstige Einnahme" data-type="income" data-category="Sonstiges">Sonstige Einnahme</option>
+      </optgroup>
+    </select>
+
+    <div class="form-row">
+      <div>
+        <label>Art</label>
+        <select id="cbType">
+          <option value="expense">Ausgabe</option>
+          <option value="income">Einnahme</option>
+        </select>
+      </div>
+      <div>
+        <label>Betrag (€)</label>
+        <input type="number" id="cbAmount" step="0.01" min="0" placeholder="0,00">
+      </div>
+    </div>
+
+    <label>Kategorie</label>
+    <select id="cbCategory">
+      <option value="Wareneinkauf">Wareneinkauf</option>
+      <option value="Wechselgeld">Wechselgeld</option>
+      <option value="Entnahme">Entnahme</option>
+      <option value="Einlage">Einlage</option>
+      <option value="Sonstiges">Sonstiges</option>
+    </select>
+
+    <label>Notiz (optional)</label>
+    <textarea id="cbNote" placeholder="Zusätzliche Informationen …"></textarea>
+
+    <button id="cbAdd" type="button">Eintrag hinzufügen</button>
+  </div>
+
+  <div class="cashbook-filter">
+    <select id="filterPeriod">
+      <option value="all">Alle Zeiträume</option>
+      <option value="today">Heute</option>
+      <option value="week">Diese Woche</option>
+      <option value="month">Dieser Monat</option>
+    </select>
+    <select id="filterType">
+      <option value="all">Alle Arten</option>
+      <option value="income">Nur Einnahmen</option>
+      <option value="expense">Nur Ausgaben</option>
+    </select>
+    <select id="filterCategory">
+      <option value="all">Alle Kategorien</option>
+      <option value="Verkauf">Verkauf</option>
+      <option value="Wareneinkauf">Wareneinkauf</option>
+      <option value="Wechselgeld">Wechselgeld</option>
+      <option value="Entnahme">Entnahme</option>
+      <option value="Einlage">Einlage</option>
+      <option value="Bestandskorrektur">Bestandskorrektur</option>
+      <option value="Sonstiges">Sonstiges</option>
+    </select>
+  </div>
+
+  <div class="filter-summary" id="filterSummary" style="display:none;"></div>
+
+  <div class="section-head">
+    <h2>Einträge</h2>
+    <button class="clear-btn" id="clearCashbook" type="button" style="margin-top:0;">Kassenbuch löschen</button>
+  </div>
+  <ul class="cashbook-list" id="cashbookList"></ul>
+
+</div>
+
+<footer>Preise in EUR. Preise inkl. MwSt.</footer>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>Preisliste bearbeiten</h3>
+    <p class="hint">Namen, Kategorien und Preise direkt ändern. Änderungen werden im Browser gespeichert.</p>
+
+    <table class="edit-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Kategorie</th>
+          <th>Schüler (€)</th>
+          <th>Erwachsene (€)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="editBody"></tbody>
+    </table>
+
+    <div class="modal-actions">
+      <button class="btn-add" id="addRow" type="button">+ Produkt hinzufügen</button>
+      <button class="btn-reset" id="resetCatalog" type="button">Standard wiederherstellen</button>
+      <button class="btn-cancel" id="cancelEdit" type="button">Abbrechen</button>
+      <button class="btn-save" id="saveEdit" type="button">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+window.onerror = function (msg, src, line) {
+  var bar = document.getElementById("errorBar");
+  if (bar) {
+    bar.style.display = "block";
+    bar.textContent = "JavaScript-Fehler: " + msg + " (Zeile " + line + ")";
+  }
+  return false;
+};
+
+(function () {
+  "use strict";
+
+  var DEFAULT_CATALOG = [
+    { name: "Grillbrot",           category: "Frühstück",  student: 1.20, adult: 1.40 },
+    { name: "Brezel",              category: "Frühstück",  student: 1.00, adult: 1.20 },
+    { name: "Waffeln/Crepes",      category: "Frühstück",  student: 1.00, adult: 1.20 },
+    { name: "Omelettebrötchen",    category: "Frühstück",  student: 1.20, adult: 1.40 },
+    { name: "Joghurt mit Früchten", category: "Frühstück", student: 1.50, adult: 2.00 }
+  ];
+
+  var CATALOG_VERSION = "4";
+  var VERSION_KEY   = "brunchies_catalog_version";
+  var CATALOG_KEY   = "brunchies_catalog_v1";
+  var HISTORY_KEY   = "brunchies_history_v1";
+  var CASHBOOK_KEY  = "brunchies_cashbook_v1";
+
+  function loadArray(key, fallback) {
+    try {
+      var raw = localStorage.getItem(key);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return fallback;
+  }
+
+  function saveArray(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  function loadCatalog() {
+    var storedVersion = localStorage.getItem(VERSION_KEY);
+    if (storedVersion !== CATALOG_VERSION) {
+      var fresh = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+      saveArray(CATALOG_KEY, fresh);
+      try { localStorage.setItem(VERSION_KEY, CATALOG_VERSION); } catch (e) {}
+      return fresh;
+    }
+    return loadArray(CATALOG_KEY, JSON.parse(JSON.stringify(DEFAULT_CATALOG)));
+  }
+
+  var APP_CATALOG  = loadCatalog();
+  var APP_HISTORY  = loadArray(HISTORY_KEY, []);
+  var APP_CASHBOOK = loadArray(CASHBOOK_KEY, []);
+  var APP_CART     = [];
+
+  function formatEuro(value) {
+    return Number(value).toFixed(2).replace(".", ",") + " €";
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  function nowTimestamp() {
+    return new Date().toLocaleString("de-DE", {
+      day: "2-digit", month: "2-digit", year: "numeric",
+      hour: "2-digit", minute: "2-digit"
+    });
+  }
+
+  function dateKey(d) {
+    return d.getFullYear() + "-" +
+      String(d.getMonth() + 1).padStart(2, "0") + "-" +
+      String(d.getDate()).padStart(2, "0");
+  }
+
+  var priceBody        = document.getElementById("priceBody");
+  var cartListEl       = document.getElementById("cartList");
+  var cartTotalEl      = document.getElementById("cartTotal");
+  var givenInput       = document.getElementById("given");
+  var changeBox        = document.getElementById("changeBox");
+  var changeAmt        = document.getElementById("changeAmount");
+  var changeNote       = document.getElementById("changeNote");
+  var checkoutBtn      = document.getElementById("checkoutBtn");
+  var historyList      = document.getElementById("historyList");
+  var historySummary   = document.getElementById("historySummary");
+  var cashbookList     = document.getElementById("cashbookList");
+  var viewKasse        = document.getElementById("viewKasse");
+  var viewKassensystem = document.getElementById("viewKassensystem");
+  var modalOverlay     = document.getElementById("modalOverlay");
+  var editBody         = document.getElementById("editBody");
+  var filterPeriodEl   = document.getElementById("filterPeriod");
+  var filterTypeEl     = document.getElementById("filterType");
+  var filterCategoryEl = document.getElementById("filterCategory");
+  var filterSummaryEl  = document.getElementById("filterSummary");
+
+  function showKasse() {
+    viewKassensystem.classList.remove("active");
+    viewKasse.classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  function showKassensystem() {
+    viewKasse.classList.remove("active");
+    viewKassensystem.classList.add("active");
+    window.scrollTo(0, 0);
+    renderCashbook();
+  }
+
+  function createPriceButton(item, type) {
+    var price = type === "student" ? item.student : item.adult;
+    var label = type === "student" ? "Schüler" : "Erwachsene";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "price-btn";
+    btn.textContent = formatEuro(price);
+    btn.title = item.name + " (" + label + ") hinzufügen";
+    btn.setAttribute("aria-label", item.name + ", " + label + ", " + formatEuro(price) + " hinzufügen");
+    btn.addEventListener("click", function () {
+      addToCart({
+        name: item.name,
+        type: type,
+        typeLabel: label,
+        price: Number(price) || 0
+      });
+    });
+    return btn;
+  }
+
+  function renderPriceList() {
+    priceBody.innerHTML = "";
+
+    if (APP_CATALOG.length === 0) {
+      priceBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8a7a6d; padding:24px;">Keine Produkte vorhanden. Klicke auf „Bearbeiten", um welche hinzuzufügen.</td></tr>';
+      return;
+    }
+
+    var categories = [];
+    APP_CATALOG.forEach(function (item) {
+      if (categories.indexOf(item.category) === -1) categories.push(item.category);
+    });
+
+    categories.forEach(function (cat) {
+      var catRow = document.createElement("tr");
+      catRow.innerHTML = '<td colspan="3" class="category">' + escapeHtml(cat) + '</td>';
+      priceBody.appendChild(catRow);
+
+      APP_CATALOG.filter(function (i) { return i.category === cat; }).forEach(function (item) {
+        var tr = document.createElement("tr");
+
+        var nameCell = document.createElement("td");
+        nameCell.className = "product-name";
+        nameCell.textContent = item.name;
+        tr.appendChild(nameCell);
+
+        var studentCell = document.createElement("td");
+        studentCell.style.textAlign = "right";
+        studentCell.appendChild(createPriceButton(item, "student"));
+        tr.appendChild(studentCell);
+
+        var adultCell = document.createElement("td");
+        adultCell.style.textAlign = "right";
+        adultCell.appendChild(createPriceButton(item, "adult"));
+        tr.appendChild(adultCell);
+
+        priceBody.appendChild(tr);
+      });
+    });
+  }
+
+  function addToCart(entry) {
+    APP_CART.push(entry);
+    renderCart();
+  }
+
+  function removeFromCart(index) {
+    APP_CART.splice(index, 1);
+    renderCart();
+  }
+
+  function cartTotal() {
+    var sum = 0;
+    APP_CART.forEach(function (e) { sum += e.price; });
+    return Math.round(sum * 100) / 100;
+  }
+
+  function renderCart() {
+    cartListEl.innerHTML = "";
+
+    if (APP_CART.length === 0) {
+      cartListEl.innerHTML = '<li class="cart-empty" style="justify-content:center; border:none;">Noch keine Artikel im Warenkorb.</li>';
+    } else {
+      APP_CART.forEach(function (entry, idx) {
+        var li = document.createElement("li");
+
+        var nameSpan = document.createElement("span");
+        nameSpan.className = "cart-name";
+        nameSpan.textContent = entry.name + " (" + entry.typeLabel + ")";
+
+        var priceSpan = document.createElement("span");
+        priceSpan.className = "cart-price";
+        priceSpan.textContent = formatEuro(entry.price);
+
+        var delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "cart-del";
+        delBtn.textContent = "✕";
+        delBtn.title = "Artikel entfernen";
+        delBtn.setAttribute("aria-label", entry.name + " entfernen");
+        delBtn.addEventListener("click", function () { removeFromCart(idx); });
+
+        li.appendChild(nameSpan);
+        li.appendChild(priceSpan);
+        li.appendChild(delBtn);
+        cartListEl.appendChild(li);
+      });
+    }
+
+    cartTotalEl.textContent = formatEuro(cartTotal());
+    checkoutBtn.disabled = APP_CART.length === 0;
+    calculateChange();
+  }
+
+  function calculateChange() {
+    var total = cartTotal();
+    var given = parseFloat(givenInput.value) || 0;
+    var change = given - total;
+
+    changeAmt.textContent = formatEuro(Math.abs(change));
+
+    if (given === 0 && total === 0) {
+      changeBox.classList.remove("negative");
+      changeNote.textContent = "Beträge oben eingeben";
+    } else if (change < 0) {
+      changeBox.classList.add("negative");
+      changeNote.textContent = "Zu wenig Geld — Kunde schuldet noch " + formatEuro(Math.abs(change));
+    } else {
+      changeBox.classList.remove("negative");
+      changeNote.textContent = change === 0
+        ? "Passender Betrag — kein Rückgeld nötig"
+        : "Diesen Betrag an den Kunden zurückgeben";
+    }
+  }
+
+  function checkout() {
+    if (APP_CART.length === 0) return;
+
+    var total = cartTotal();
+    var given = parseFloat(givenInput.value) || 0;
+
+    if (given > 0 && given < total) {
+      alert("Das gegebene Geld reicht nicht aus. Bitte Betrag prüfen.");
+      return;
+    }
+
+    var stamp = nowTimestamp();
+
+    var sale = {
+      id: Date.now(),
+      timestamp: stamp,
+      items: APP_CART.map(function (e) {
+        return { name: e.name, typeLabel: e.typeLabel, price: e.price };
+      }),
+      total: total,
+      given: given,
+      change: given > 0 ? Math.round((given - total) * 100) / 100 : 0
+    };
+
+    APP_HISTORY.unshift(sale);
+    saveArray(HISTORY_KEY, APP_HISTORY);
+
+    APP_CASHBOOK.unshift({
+      id: "sale-" + sale.id,
+      timestamp: stamp,
+      description: "Verkauf (" + sale.items.length + " Artikel)",
+      amount: total,
+      type: "income",
+      category: "Verkauf",
+      note: "",
+      source: "sale"
+    });
+    saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+
+    APP_CART = [];
+    givenInput.value = "";
+    renderCart();
+    renderHistory();
+    renderCashbook();
+
+    var oldText = changeNote.textContent;
+    changeNote.textContent = "✓ Verkauf gespeichert (" + formatEuro(total) + ")";
+    setTimeout(function () {
+      if (changeNote.textContent.indexOf("✓") === 0) changeNote.textContent = oldText;
+    }, 2500);
+  }
+
+  function renderHistory() {
+    historyList.innerHTML = "";
+
+    if (APP_HISTORY.length === 0) {
+      historyList.innerHTML = '<li class="history-empty">Noch keine Verkäufe gespeichert.</li>';
+      historySummary.style.display = "none";
+      return;
+    }
+
+    var revenue = 0;
+    APP_HISTORY.forEach(function (h) { revenue += h.total; });
+    revenue = Math.round(revenue * 100) / 100;
+
+    document.getElementById("sumCount").textContent = APP_HISTORY.length;
+    document.getElementById("sumRevenue").textContent = formatEuro(revenue);
+    historySummary.style.display = "flex";
+
+    APP_HISTORY.forEach(function (sale) {
+      var li = document.createElement("li");
+
+      var head = document.createElement("div");
+      head.className = "history-head";
+
+      var dateSpan = document.createElement("span");
+      dateSpan.className = "history-date";
+      dateSpan.textContent = sale.timestamp;
+
+      var totalSpan = document.createElement("span");
+      totalSpan.className = "history-total";
+      totalSpan.textContent = formatEuro(sale.total);
+
+      head.appendChild(dateSpan);
+      head.appendChild(totalSpan);
+      li.appendChild(head);
+
+      var itemsDiv = document.createElement("div");
+      itemsDiv.className = "history-items";
+      itemsDiv.innerHTML = sale.items.map(function (i) {
+        return escapeHtml(i.name) + " (" + escapeHtml(i.typeLabel) + ") — " + formatEuro(i.price);
+      }).join("<br>");
+      li.appendChild(itemsDiv);
+
+      var actions = document.createElement("div");
+      actions.className = "history-actions";
+
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.textContent = "Eintrag löschen";
+      delBtn.addEventListener("click", function () {
+        if (confirm("Diesen Verkauf aus der Historie löschen? Der zugehörige Kassenbucheintrag wird ebenfalls entfernt.")) {
+          APP_HISTORY = APP_HISTORY.filter(function (h) { return h.id !== sale.id; });
+          saveArray(HISTORY_KEY, APP_HISTORY);
+
+          APP_CASHBOOK = APP_CASHBOOK.filter(function (c) { return c.id !== "sale-" + sale.id; });
+          saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+
+          renderHistory();
+          renderCashbook();
+        }
+      });
+      actions.appendChild(delBtn);
+
+      li.appendChild(actions);
+      historyList.appendChild(li);
+    });
+  }
+
+  function filterCashbook() {
+    var period = filterPeriodEl.value;
+    var type = filterTypeEl.value;
+    var category = filterCategoryEl.value;
+
+    var now = new Date();
+    var todayKey = dateKey(now);
+
+    var weekStart = new Date(now);
+    var dayOfWeek = (now.getDay() + 6) % 7;
+    weekStart.setDate(now.getDate() - dayOfWeek);
+    weekStart.setHours(0, 0, 0, 0);
+
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    return APP_CASHBOOK.filter(function (entry) {
+      if (type !== "all" && entry.type !== type) return false;
+      if (category !== "all" && entry.category !== category) return false;
+
+      if (period === "all") return true;
+
+      var parts = (entry.timestamp || "").split(", ");
+      if (parts.length < 1) return false;
+      var dParts = parts[0].split(".");
+      if (dParts.length < 3) return false;
+      var d = new Date(parseInt(dParts[2], 10), parseInt(dParts[1], 10) - 1, parseInt(dParts[0], 10));
+      if (isNaN(d.getTime())) return false;
+
+      if (period === "today") return dateKey(d) === todayKey;
+      if (period === "week") return d >= weekStart;
+      if (period === "month") return d >= monthStart;
+      return true;
+    });
+  }
+
+  function calculateTotals() {
+    var totalIncome = 0, totalExpense = 0;
+    APP_CASHBOOK.forEach(function (e) {
+      if (e.type === "income") totalIncome += Number(e.amount) || 0;
+      else totalExpense += Number(e.amount) || 0;
+    });
+    totalIncome = Math.round(totalIncome * 100) / 100;
+    totalExpense = Math.round(totalExpense * 100) / 100;
+    return {
+      income: totalIncome,
+      expense: totalExpense,
+      balance: Math.round((totalIncome - totalExpense) * 100) / 100
+    };
+  }
+
+  function renderCashbook() {
+    var t = calculateTotals();
+
+    document.getElementById("cashBalance").textContent = formatEuro(t.balance);
+    document.getElementById("cashSub").textContent =
+      "Einnahmen " + formatEuro(t.income) + " − Ausgaben " + formatEuro(t.expense);
+
+    var filtered = filterCashbook();
+
+    var fIncome = 0, fExpense = 0;
+    filtered.forEach(function (e) {
+      if (e.type === "income") fIncome += Number(e.amount) || 0;
+      else fExpense += Number(e.amount) || 0;
+    });
+    fIncome = Math.round(fIncome * 100) / 100;
+    fExpense = Math.round(fExpense * 100) / 100;
+
+    document.getElementById("cashIncome").textContent = formatEuro(fIncome);
+    document.getElementById("cashExpense").textContent = formatEuro(fExpense);
+
+    if (filterPeriodEl.value !== "all" || filterTypeEl.value !== "all" || filterCategoryEl.value !== "all") {
+      filterSummaryEl.style.display = "flex";
+      filterSummaryEl.innerHTML =
+        "<span>Einträge: <strong>" + filtered.length + "</strong></span>" +
+        "<span>Einnahmen: <strong style='color:#2e7d32;'>" + formatEuro(fIncome) + "</strong></span>" +
+        "<span>Ausgaben: <strong style='color:#c62828;'>" + formatEuro(fExpense) + "</strong></span>" +
+        "<span>Saldo: <strong>" + formatEuro(Math.round((fIncome - fExpense) * 100) / 100) + "</strong></span>";
+    } else {
+      filterSummaryEl.style.display = "none";
+    }
+
+    cashbookList.innerHTML = "";
+
+    if (filtered.length === 0) {
+      cashbookList.innerHTML = '<li class="cashbook-empty">Keine Einträge für diese Auswahl.</li>';
+      return;
+    }
+
+    filtered.forEach(function (entry) {
+      var li = document.createElement("li");
+
+      var row = document.createElement("div");
+      row.className = "entry-row";
+
+      var info = document.createElement("div");
+      info.className = "entry-info";
+
+      var sourceClass = entry.source === "sale" ? "sale"
+                      : entry.source === "correction" ? "correction"
+                      : "manual";
+      var sourceLabel = entry.source === "sale" ? "Verkauf"
+                      : entry.source === "correction" ? "Korrektur"
+                      : "manuell";
+
+      var desc = document.createElement("div");
+      desc.className = "entry-desc";
+      desc.innerHTML = escapeHtml(entry.description) +
+        '<span class="cashbook-tag ' + sourceClass + '">' + sourceLabel + '</span>' +
+        (entry.category ? '<span class="cashbook-tag cat">' + escapeHtml(entry.category) + '</span>' : '');
+
+      var meta = document.createElement("div");
+      meta.className = "entry-meta";
+      meta.textContent = entry.timestamp + " · " + (entry.type === "income" ? "Einnahme" : "Ausgabe");
+
+      info.appendChild(desc);
+      info.appendChild(meta);
+
+      if (entry.note) {
+        var note = document.createElement("div");
+        note.className = "entry-note";
+        note.textContent = entry.note;
+        info.appendChild(note);
+      }
+
+      row.appendChild(info);
+
+      var amount = document.createElement("div");
+      amount.className = "entry-amount " + (entry.type === "income" ? "income" : "expense");
+      amount.textContent = (entry.type === "income" ? "+" : "−") + formatEuro(entry.amount);
+      row.appendChild(amount);
+
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "entry-del";
+      delBtn.textContent = "✕";
+      delBtn.title = "Eintrag löschen";
+      delBtn.setAttribute("aria-label", "Eintrag löschen: " + entry.description);
+      delBtn.addEventListener("click", function () {
+        if (confirm("Diesen Kassenbucheintrag löschen?")) {
+          APP_CASHBOOK = APP_CASHBOOK.filter(function (c) { return c.id !== entry.id; });
+          saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+          renderCashbook();
+        }
+      });
+      row.appendChild(delBtn);
+
+      li.appendChild(row);
+      cashbookList.appendChild(li);
+    });
+  }
+
+  function addCashbookEntry() {
+    var descEl     = document.getElementById("cbDesc");
+    var typeEl     = document.getElementById("cbType");
+    var amountEl   = document.getElementById("cbAmount");
+    var categoryEl = document.getElementById("cbCategory");
+    var noteEl     = document.getElementById("cbNote");
+
+    var description = descEl.value || "";
+    var amount = parseFloat(amountEl.value) || 0;
+
+    if (description === "") {
+      alert("Bitte eine Beschreibung auswählen.");
+      descEl.focus();
+      return;
+    }
+    if (amount <= 0) {
+      alert("Bitte einen Betrag größer als 0 eingeben.");
+      amountEl.focus();
+      return;
+    }
+
+    APP_CASHBOOK.unshift({
+      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      timestamp: nowTimestamp(),
+      description: description,
+      amount: Math.round(amount * 100) / 100,
+      type: typeEl.value === "income" ? "income" : "expense",
+      category: categoryEl.value || "Sonstiges",
+      note: (noteEl.value || "").trim(),
+      source: "manual"
+    });
+    saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+
+    descEl.value = "";
+    amountEl.value = "";
+    noteEl.value = "";
+    typeEl.value = "expense";
+    categoryEl.value = "Wareneinkauf";
+    renderCashbook();
+  }
+
+  function applyNewBalance() {
+    var input = document.getElementById("newBalance");
+    var newVal = parseFloat(input.value);
+
+    if (isNaN(newVal) || newVal < 0) {
+      alert("Bitte einen gültigen Betrag (≥ 0) eingeben.");
+      input.focus();
+      return;
+    }
+
+    var current = calculateTotals().balance;
+    var diff = Math.round((newVal - current) * 100) / 100;
+
+    if (diff === 0) {
+      alert("Der eingegebene Betrag entspricht bereits dem aktuellen Bestand. Keine Änderung nötig.");
+      return;
+    }
+
+    var stamp = nowTimestamp();
+
+    APP_CASHBOOK.unshift({
+      id: "corr-" + Date.now(),
+      timestamp: stamp,
+      description: "Bestandskorrektur",
+      amount: Math.abs(diff),
+      type: diff > 0 ? "income" : "expense",
+      category: "Bestandskorrektur",
+      note: "Bestand geändert von " + formatEuro(current) + " auf " + formatEuro(newVal),
+      source: "correction"
+    });
+    saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+
+    input.value = "";
+    renderCashbook();
+  }
+
+  var workingCopy = [];
+
+  function openEditor() {
+    workingCopy = JSON.parse(JSON.stringify(APP_CATALOG));
+    renderEditor();
+    modalOverlay.classList.add("open");
+  }
+  function closeEditor() { modalOverlay.classList.remove("open"); }
+
+  function makeInput(type, value, field) {
+    var input = document.createElement("input");
+    input.type = type;
+    input.dataset.field = field;
+    if (type === "number") {
+      input.step = "0.01";
+      input.min = "0";
+      input.value = (value !== undefined && value !== null) ? value : "";
+    } else {
+      input.value = value || "";
+    }
+    input.addEventListener("input", function () {
+      var tr = input.closest("tr");
+      var rowIndex = Array.prototype.indexOf.call(editBody.children, tr);
+      if (rowIndex < 0 || rowIndex >= workingCopy.length) return;
+      if (field === "student" || field === "adult") {
+        workingCopy[rowIndex][field] = parseFloat(input.value) || 0;
+      } else {
+        workingCopy[rowIndex][field] = input.value;
+      }
+    });
+    return input;
+  }
+
+  function renderEditor() {
+    editBody.innerHTML = "";
+
+    if (workingCopy.length === 0) {
+      editBody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#8a7a6d; padding:18px;">Noch keine Produkte. Klicke auf „+ Produkt hinzufügen".</td></tr>';
+      return;
+    }
+
+    workingCopy.forEach(function (item, idx) {
+      var tr = document.createElement("tr");
+
+      var tdName = document.createElement("td");
+      tdName.dataset.label = "Name";
+      tdName.appendChild(makeInput("text", item.name, "name"));
+      tr.appendChild(tdName);
+
+      var tdCat = document.createElement("td");
+      tdCat.dataset.label = "Kategorie";
+      tdCat.appendChild(makeInput("text", item.category, "category"));
+      tr.appendChild(tdCat);
+
+      var tdStudent = document.createElement("td");
+      tdStudent.dataset.label = "Schüler (€)";
+      tdStudent.appendChild(makeInput("number", item.student, "student"));
+      tr.appendChild(tdStudent);
+
+      var tdAdult = document.createElement("td");
+      tdAdult.dataset.label = "Erwachsene (€)";
+      tdAdult.appendChild(makeInput("number", item.adult, "adult"));
+      tr.appendChild(tdAdult);
+
+      var tdDel = document.createElement("td");
+      tdDel.dataset.label = "";
+      var delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "del-btn";
+      delBtn.textContent = "✕";
+      delBtn.title = "Produkt entfernen";
+      delBtn.setAttribute("aria-label", "Produkt entfernen: " + (item.name || "neu"));
+      delBtn.addEventListener("click", function () {
+        workingCopy.splice(idx, 1);
+        renderEditor();
+      });
+      tdDel.appendChild(delBtn);
+      tr.appendChild(tdDel);
+
+      editBody.appendChild(tr);
+    });
+  }
+
+  function saveEditor() {
+    var rows = editBody.querySelectorAll("tr");
+    var result = [];
+
+    Array.prototype.forEach.call(rows, function (tr) {
+      if (!tr.querySelector("input")) return;
+
+      var nameInput     = tr.querySelector('input[data-field="name"]');
+      var categoryInput = tr.querySelector('input[data-field="category"]');
+      var studentInput  = tr.querySelector('input[data-field="student"]');
+      var adultInput    = tr.querySelector('input[data-field="adult"]');
+
+      if (!nameInput) return;
+      var name = (nameInput.value || "").trim();
+      if (name === "") return;
+
+      result.push({
+        name: name,
+        category: (categoryInput && categoryInput.value.trim()) || "Frühstück",
+        student: parseFloat(studentInput && studentInput.value) || 0,
+        adult: parseFloat(adultInput && adultInput.value) || 0
+      });
+    });
+
+    if (result.length === 0) {
+      alert("Mindestens ein Produkt mit Namen wird benötigt.");
+      return;
+    }
+
+    APP_CATALOG = result;
+    saveArray(CATALOG_KEY, APP_CATALOG);
+    try { localStorage.setItem(VERSION_KEY, CATALOG_VERSION); } catch (e) {}
+    renderPriceList();
+    closeEditor();
+  }
+
+  function bindEvents() {
+    document.getElementById("gotoKasse").addEventListener("click", function () {
+      setTimeout(showKassensystem, 0);
+    });
+    document.getElementById("backToKasse").addEventListener("click", function () {
+      setTimeout(showKasse, 0);
+    });
+
+    givenInput.addEventListener("input", calculateChange);
+    checkoutBtn.addEventListener("click", checkout);
+
+    document.getElementById("clearHistory").addEventListener("click", function () {
+      if (APP_HISTORY.length === 0) return;
+      if (confirm("Möchtest du wirklich die gesamte Verkaufshistorie löschen? Auch die zugehörigen Kassenbucheinträge werden entfernt.")) {
+        var saleIds = APP_HISTORY.map(function (h) { return "sale-" + h.id; });
+        APP_HISTORY = [];
+        saveArray(HISTORY_KEY, APP_HISTORY);
+        APP_CASHBOOK = APP_CASHBOOK.filter(function (c) { return saleIds.indexOf(c.id) === -1; });
+        saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+        renderHistory();
+        renderCashbook();
+      }
+    });
+
+    document.getElementById("cbAdd").addEventListener("click", addCashbookEntry);
+
+    document.getElementById("cbDesc").addEventListener("change", function () {
+      var opt = this.options[this.selectedIndex];
+      if (!opt || !opt.value) return;
+      var type = opt.getAttribute("data-type");
+      var cat = opt.getAttribute("data-category");
+      if (type) document.getElementById("cbType").value = type;
+      if (cat) document.getElementById("cbCategory").value = cat;
+    });
+
+    document.getElementById("clearCashbook").addEventListener("click", function () {
+      if (APP_CASHBOOK.length === 0) return;
+      if (confirm("Möchtest du wirklich das gesamte Kassenbuch löschen? Das kann nicht rückgängig gemacht werden.")) {
+        APP_CASHBOOK = [];
+        saveArray(CASHBOOK_KEY, APP_CASHBOOK);
+        renderCashbook();
+      }
+    });
+
+    document.getElementById("applyBalance").addEventListener("click", applyNewBalance);
+
+    filterPeriodEl.addEventListener("change", renderCashbook);
+    filterTypeEl.addEventListener("change", renderCashbook);
+    filterCategoryEl.addEventListener("change", renderCashbook);
+
+    document.getElementById("openEditor").addEventListener("click", openEditor);
+    document.getElementById("cancelEdit").addEventListener("click", closeEditor);
+    document.getElementById("saveEdit").addEventListener("click", saveEditor);
+
+    document.getElementById("addRow").addEventListener("click", function () {
+      workingCopy.push({ name: "", category: "Frühstück", student: 0, adult: 0 });
+      renderEditor();
+      var rows = editBody.querySelectorAll("tr");
+      var lastRow = rows[rows.length - 1];
+      if (lastRow) {
+        var firstInput = lastRow.querySelector("input");
+        if (firstInput) firstInput.focus();
+      }
+    });
+
+    document.getElementById("resetCatalog").addEventListener("click", function () {
+      if (confirm("Möchtest du wirklich den ursprünglichen Katalog wiederherstellen? Alle deine Änderungen gehen verloren.")) {
+        workingCopy = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+        renderEditor();
+      }
+    });
+
+    modalOverlay.addEventListener("click", function (e) {
+      if (e.target === modalOverlay) closeEditor();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modalOverlay.classList.contains("open")) closeEditor();
+    });
+  }
+
+  function init() {
+    renderPriceList();
+    renderCart();
+    renderHistory();
+    renderCashbook();
+    calculateChange();
+    bindEvents();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+
+})();
+</script>
+
+</body>
+</html>
